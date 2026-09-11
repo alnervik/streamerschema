@@ -15,6 +15,10 @@
   --off-line: #3d9d78;
   --off-ink:  #1c6a4e;
   --pin:      #fff8d6;
+  --free:     #fdf1d0;
+  --free-line:#d9a441;
+  --free-ink: #8a5a12;
+  --dark:     #f1f4f7;
   --radius:   3px;
   --pad:      clamp(10px, 1.2vw, 16px);
   --maxw:     2200px;
@@ -62,7 +66,7 @@ code {
   flex-wrap: wrap;
   padding-block: 11px;
   background: var(--board);
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
 }
 
 .bar-id { display: flex; align-items: baseline; gap: 8px; }
@@ -84,6 +88,33 @@ code {
   margin: 0 0 0 auto;
   font-size: 13px;
   color: var(--ink-3);
+}
+
+/* ── Flikar ───────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--board);
+  border-bottom: 2px solid var(--ink);
+  padding-inline: max(var(--pad), calc((100% - var(--maxw)) / 2));
+}
+
+.tab {
+  background: none;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 9px 16px;
+  font: 600 15px 'Barlow Semi Condensed', sans-serif;
+  letter-spacing: .01em;
+  color: var(--ink-2);
+}
+
+.tab:hover { color: var(--ink); background: var(--rule-2); }
+
+.tab.is-on {
+  color: var(--ink);
+  border-bottom-color: var(--red);
 }
 
 main { padding-block: var(--pad); }
@@ -339,6 +370,253 @@ table { border-collapse: separate; border-spacing: 0; width: auto; }
 .swatch-scale.cool i:nth-child(3) { background: var(--cool-3); }
 .swatch-scale.cool i:nth-child(4) { background: var(--cool-4); }
 
+/* ── Lediga platser: lagrad och paneler ───── */
+.rosterbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 12px;
+  padding: 9px 12px;
+  background: var(--board);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--red);
+}
+
+.rosterbar .field { margin-right: auto; }
+.rosterbar button:disabled { opacity: .4; cursor: not-allowed; }
+
+.panels {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 14px;
+}
+
+.panel {
+  background: var(--board);
+  border: 1px solid var(--rule);
+  padding: 14px 16px;
+}
+
+.panel h2 {
+  margin: 0 0 4px;
+  font: 600 17px 'Barlow Semi Condensed', sans-serif;
+}
+
+.panel h2 .count {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink-3);
+  padding-left: 8px;
+  border-left: 1px solid var(--rule);
+}
+
+.panel-note { margin: 0 0 12px; font-size: 13px; color: var(--ink-2); max-width: 70ch; }
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+}
+
+.panel-sum { font-size: 13px; color: var(--ink-3); }
+
+/* Ligans platser: en ruta per position. */
+.slots { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 4px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.slot input {
+  width: 46px;
+  font: 600 14px Barlow, sans-serif;
+  text-align: center;
+  color: var(--ink);
+  background: var(--board);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 4px 2px;
+}
+
+/* Positionsbrickan är samma sak överallt: i platsrutan, på spelarraden
+   och längst till vänster i rutnätet. */
+.slot-tag {
+  display: inline-block;
+  min-width: 38px;
+  padding: 2px 6px;
+  font: 700 13px 'Barlow Semi Condensed', sans-serif;
+  letter-spacing: .03em;
+  text-align: center;
+  border-radius: var(--radius);
+  background: var(--rule-2);
+  color: var(--ink-2);
+}
+
+.pos-C    { background: #e4ecf6; color: #1d4e7c; }
+.pos-LW   { background: #e7f1e8; color: #2c6238; }
+.pos-RW   { background: #f7ece2; color: #8a5220; }
+.pos-D    { background: #ece7f4; color: #4d3b7a; }
+.pos-UTIL { background: #eef0f2; color: #46535f; }
+.pos-G    { background: #f9e5e6; color: #8c2328; }
+
+/* Spelarlistan */
+.roster { width: 100%; font-size: 14px; }
+.roster th {
+  text-align: left;
+  padding: 0 6px 5px;
+  font: 600 13px 'Barlow Semi Condensed', sans-serif;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
+}
+
+.roster td { padding: 3px 6px; border-bottom: 1px solid var(--rule-2); vertical-align: middle; }
+.roster tr:last-child td { border-bottom: 0; }
+.roster .r-h-name { width: 34%; }
+.roster .r-h-team { width: 30%; }
+
+.roster input[type="text"],
+.roster select {
+  width: 100%;
+  font: 400 14px Barlow, sans-serif;
+  color: var(--ink);
+  background: var(--board);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 5px 7px;
+}
+
+.roster td.r-pos { white-space: nowrap; }
+
+.pos-btn {
+  min-width: 34px;
+  margin-right: 3px;
+  padding: 4px 6px;
+  font: 600 12px 'Barlow Semi Condensed', sans-serif;
+  letter-spacing: .03em;
+  color: var(--ink-3);
+  background: var(--board);
+  border: 1px solid var(--rule);
+}
+
+.pos-btn:hover { border-color: var(--ink-3); color: var(--ink-2); }
+
+/* Vald position får positionens egen färg och en tydlig kant. */
+.pos-btn.is-on { color: var(--ink); border-color: currentColor; font-weight: 700; }
+.pos-btn.is-on.pos-C  { color: #1d4e7c; background: #e4ecf6; }
+.pos-btn.is-on.pos-LW { color: #2c6238; background: #e7f1e8; }
+.pos-btn.is-on.pos-RW { color: #8a5220; background: #f7ece2; }
+.pos-btn.is-on.pos-D  { color: #4d3b7a; background: #ece7f4; }
+.pos-btn.is-on.pos-G  { color: #8c2328; background: #f9e5e6; }
+
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  font: 400 18px/1 Barlow, sans-serif;
+  color: var(--ink-3);
+  background: none;
+  border: 1px solid transparent;
+}
+
+.icon-btn:hover { color: var(--red); border-color: var(--rule); }
+
+.r-none td, td.r-none { color: var(--ink-3); font-size: 13px; padding: 10px 6px; }
+
+.quick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+.quick input {
+  flex: 1 1 220px;
+  min-width: 0;
+  font: 500 14px Barlow, sans-serif;
+  color: var(--ink);
+  background: var(--board);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+}
+
+.quick .err { flex-basis: 100%; font-size: 13px; }
+
+.share { margin-top: 14px; border-top: 1px solid var(--rule-2); padding-top: 10px; }
+.share summary { cursor: pointer; font-size: 13px; color: var(--ink-2); }
+.share summary:hover { color: var(--blue); }
+.share .panel-note { margin-top: 10px; }
+
+.share textarea {
+  width: 100%;
+  font: 400 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--ink);
+  background: var(--ice);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 8px;
+  resize: vertical;
+}
+
+.share-msg { font-size: 13px; color: var(--ink-2); }
+
+/* ── Uppställningen i rutnätet ─────────────── */
+.grid th.col-slot { width: 118px; }
+.grid td.col-slot { text-align: left; padding: 3px 10px; font-weight: 600; }
+
+/* En dag utan matcher i ligan är ingen möjlighet — den tonas ned. */
+.grid th.col-day.is-dark { background: var(--dark); color: var(--ink-3); }
+.grid td.is-dark { background: var(--dark); }
+
+.grid td.cell .ln-name {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid td.cell .ln-opp { display: block; font-size: 12px; color: var(--ink-2); }
+
+/* Den lediga platsen är hela poängen med vyn, så den syns tydligast. */
+.grid td.is-free { background: var(--free); box-shadow: inset 0 0 0 1px var(--free-line); }
+
+.ln-free {
+  font: 700 12px 'Barlow Semi Condensed', sans-serif;
+  letter-spacing: .06em;
+  color: var(--free-ink);
+}
+
+.star { color: var(--off-line); font-size: 12px; cursor: help; }
+
+.grid tfoot td {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: var(--board);
+  border-top: 2px solid var(--ink);
+  font-weight: 600;
+}
+
+.grid tfoot td.frozen { z-index: 5; }
+.grid tfoot td.col-slot { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+
+.swatch-free {
+  width: 15px; height: 15px;
+  background: var(--free);
+  border: 1px solid var(--free-line);
+}
+
+.swatch-dark {
+  width: 15px; height: 15px;
+  background: var(--dark);
+  border: 1px solid var(--rule);
+}
+
 /* ── Tomt läge ────────────────────────────── */
 .empty {
   max-width: 56ch;
@@ -350,12 +628,42 @@ table { border-collapse: separate; border-spacing: 0; width: auto; }
 .empty h2 { margin: 0 0 8px; font: 600 18px 'Barlow Semi Condensed', sans-serif; }
 .empty p { color: var(--ink-2); margin: 0 0 14px; }
 
+@media (max-width: 1100px) {
+  .panels { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (max-width: 760px) {
   .team-name { display: none; }
   .stamp { width: 100%; margin-left: 0; }
 
-  /* Bara lagkolumnen får plats att ligga kvar när man scrollar i sidled. */
-  .grid .frozen:not(.col-team) { position: static; }
+  .tabs { padding-inline: var(--pad); }
+  .tab { padding: 9px 12px; }
+  .rosterbar .field { margin-right: 0; width: 100%; }
+  .rosterbar .field select { flex: 1; min-width: 0; }
+  .grid th.col-slot { width: 88px; }
+
+  /* Spelarraden staplas i stället för att klämma ihop lagvalet till tre
+     bokstäver: namn och lag bredvid varandra, positionerna på egen rad. */
+  .roster, .roster tbody, .roster tr, .roster td { display: block; width: auto; }
+  .roster thead { display: none; }
+
+  .roster tr[data-id] {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 9px 32px 9px 0;
+  }
+
+  .roster tr[data-id] td { padding: 0; border: 0; }
+  .roster td.r-pos { grid-column: 1 / -1; }
+  .roster tr[data-id] td:last-child { position: absolute; top: 9px; right: 0; }
+  .pos-btn { min-width: 40px; }
+
+  /* Bara lag- respektive platskolumnen får ligga kvar när man scrollar i
+     sidled — sifferkolumnerna får ge plats åt dagarna. */
+  .grid .frozen:not(.col-team):not(.col-slot) { position: static; }
+  .grid tfoot td { position: static; }
   .grid td.num, .grid th.num { padding: 2px 5px; }
 }
 

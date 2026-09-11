@@ -1,10 +1,15 @@
 # NHL-schema
 
-Statiskt schemaverktyg för fantasyhockey. Rangordnar lagen efter hur bra deras
-schema är under en vald period: hur många matcher de spelar, hur många av dem som
-ligger på offnights, vilka som är back-to-back och vilka som möter ett lag
-som spelade dagen innan — samma grundidé som TJStats schema-app, men som ren
-HTML/JS så att den kan ligga på GitHub Pages.
+Statiskt schemaverktyg för fantasyhockey, i två flikar.
+
+**Schema** rangordnar NHL-lagen efter hur bra deras schema är under en vald
+period: hur många matcher de spelar, hur många av dem som ligger på offnights,
+vilka som är back-to-back och vilka som möter ett lag som spelade dagen innan —
+samma grundidé som TJStats schema-app, men som ren HTML/JS så att den kan ligga
+på GitHub Pages.
+
+**Lediga platser** vänder på det och utgår från ditt eget fantasylag: den fyller
+uppställningen dag för dag och visar var du har hål att streama in någon i.
 
 Ingen build, inga beroenden, inget backend. Schemat ligger som JSON i repot och
 uppdateras av ett Node-skript som GitHub Actions kör varje natt.
@@ -73,6 +78,48 @@ hela grundserien. Gult betyder att mer är bättre, blått att mer är sämre.
 | Grön cell | Matchen ligger på en offnight |
 | Röd kant på brickan | Lagets andra match på två dagar — vila och backupmålvakt är i spel |
 | 🥱 | Motståndaren spelade dagen innan och är alltså tröttkörd |
+
+## Lediga platser
+
+Andra fliken svarar på en annan fråga än schemavyn: *var i min egen uppställning
+finns det hål?* Du ställer in hur många platser din liga startar — 2 C, 2 LW,
+2 RW, 4 D, 1 UTIL, 2 G som standard — och lägger in ditt lag som position och
+NHL-lag. Sedan fyller appen varje speldag i perioden och visar vilka platser som
+blir stående tomma. Det är där en streamer ska in.
+
+Flera lag går att ha samtidigt, ett per fantasyliga, var och ett med sin egen
+platsuppsättning och spelarlista. **Kopiera** är genvägen när två ligor har nästan
+samma lag.
+
+Spelare läggs enklast in i snabbrutan:
+
+```
+D-COL             en back i Colorado
+C/LW-TOR          en spelare i Toronto som får ställas på både C och LW
+D-COL, G-BOS      flera åt gången
+```
+
+Namnet är valfritt och bara en etikett — står det tomt visas spelaren som
+`D-COL`. Det är laget och positionerna som styr uträkningen, inte namnet.
+
+Uppställningen fylls med maximal matchning, inte girigt uppifrån: en C/LW som
+lagt beslag på UTIL flyttas automatiskt till en C-plats om en ren wing annars
+hade blivit utan. Antalet startade spelare per dag blir alltså så högt som det
+över huvud taget går, och det som står kvar som **LEDIG** är riktiga hål.
+
+| Markering | Betydelse |
+| --- | --- |
+| Gul cell, `LEDIG` | Ingen av dina spelare kan fylla platsen den dagen |
+| ★ | Den lediga platsen ligger på en offnight — lättast att plocka upp |
+| Grå kolumn | Ingen NHL-match alls den dagen, räknas inte med |
+| Bänkade | Dina spelare som har match men inte får plats — laget är för brett den dagen |
+
+Offnight-tröskeln är gemensam med schemavyn, så båda flikarna är överens om
+vilka dagar som är offnights.
+
+Lagen sparas i webbläsarens `localStorage` och följer alltså inte med till en
+annan dator. Under *Exportera / importera* ligger allihop som JSON att kopiera
+över.
 
 ## Data
 
