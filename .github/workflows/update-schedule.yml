@@ -1,7 +1,6 @@
 name: Uppdatera NHL-schema
 
 on:
-  schedule:
   workflow_dispatch:        # går att köra manuellt från Actions-fliken
 
 permissions:
