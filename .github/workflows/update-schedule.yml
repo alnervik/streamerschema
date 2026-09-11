@@ -2,7 +2,6 @@ name: Uppdatera NHL-schema
 
 on:
   schedule:
-    - cron: '20 9 * * *'   # varje dag 09:20 UTC
   workflow_dispatch:        # går att köra manuellt från Actions-fliken
 
 permissions:
