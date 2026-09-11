@@ -20,6 +20,11 @@
   <p class="stamp" id="stamp"></p>
 </header>
 
+<nav class="tabs" id="tabs" hidden>
+  <button class="tab is-on" data-view="schedule">Schema</button>
+  <button class="tab" data-view="roster">Lediga platser</button>
+</nav>
+
 <main>
 
 <!-- ─────────────── Schemavy ─────────────── -->
@@ -79,6 +84,123 @@
     <span class="key"><span class="swatch-scale warm"><i></i><i></i><i></i><i></i></span> mer är bättre</span>
     <span class="key"><span class="swatch-scale cool"><i></i><i></i><i></i><i></i></span> mer är sämre</span>
     <span class="key">Klicka på ett lag för att markera det.</span>
+  </p>
+</section>
+
+<!-- ─────────────── Lediga platser ─────────────── -->
+<section id="view-roster" hidden>
+
+  <div class="rosterbar">
+    <label class="field field-wide">
+      <span>Lag</span>
+      <select id="teamPick"></select>
+    </label>
+    <button class="solid" id="newRoster">+ Nytt lag</button>
+    <button class="ghost" id="renameRoster">Byt namn</button>
+    <button class="ghost" id="copyRosterTeam">Kopiera</button>
+    <button class="ghost" id="deleteRoster">Ta bort</button>
+  </div>
+
+  <div class="toolbar">
+    <label class="field field-wide">
+      <span>Från vecka</span>
+      <select id="rFrom"></select>
+    </label>
+
+    <label class="field field-wide">
+      <span>Till vecka</span>
+      <select id="rTo"></select>
+    </label>
+
+    <label class="field">
+      <span>Offnight: högst</span>
+      <input type="number" id="rOffMax" min="1" max="16" step="1" value="6">
+      <em>matcher i ligan</em>
+    </label>
+  </div>
+
+  <div class="panels">
+
+    <section class="panel">
+      <h2>Ligans platser</h2>
+      <p class="panel-note">
+        Hur många platser av varje position det valda lagets liga startar. UTIL
+        tas av vilken utespelare som helst — C, LW, RW eller D. Varje lag har sin
+        egen uppsättning, så olika ligor kan se olika ut.
+      </p>
+      <div class="slots" id="slotFields"></div>
+      <div class="panel-actions">
+        <button class="ghost" id="resetSlots">Återställ standard</button>
+        <span class="panel-sum" id="slotSum"></span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2><span id="rosterName">Mitt lag</span> <span class="count" id="rosterCount"></span></h2>
+      <p class="panel-note">
+        En rad per spelare: vilket lag hen spelar i och vilka positioner hen får
+        ställas på. Skriv <code>D-COL</code> i snabbrutan för att lägga till en
+        back i Colorado — flera positioner med snedstreck, <code>C/LW-TOR</code>,
+        och flera spelare med komma.
+      </p>
+
+      <div class="quick">
+        <input type="text" id="quickAdd" placeholder="D-COL, C/LW-TOR, G-VGK …" spellcheck="false" autocomplete="off">
+        <button class="solid" id="quickAddBtn">Lägg till</button>
+        <span class="err" id="quickErr"></span>
+      </div>
+
+      <table class="roster" id="rosterTable">
+        <thead>
+          <tr>
+            <th class="r-h-name">Spelare</th>
+            <th class="r-h-team">Lag</th>
+            <th class="r-h-pos">Positioner</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+
+      <div class="panel-actions">
+        <button class="ghost" id="addPlayer">+ Tom rad</button>
+        <button class="ghost" id="clearRoster">Töm laget</button>
+      </div>
+
+      <details class="share">
+        <summary>Exportera / importera</summary>
+        <p class="panel-note">
+          Alla dina lag sparas automatiskt i den här webbläsaren. Texten nedan
+          innehåller allihop — kopiera den för att flytta dem till en annan dator,
+          eller klistra in en tidigare kopia och tryck Importera.
+        </p>
+        <textarea id="shareBox" rows="4" spellcheck="false"></textarea>
+        <div class="panel-actions">
+          <button class="ghost" id="copyRoster">Kopiera</button>
+          <button class="solid" id="importRoster">Importera</button>
+          <span class="share-msg" id="shareMsg"></span>
+        </div>
+      </details>
+    </section>
+
+  </div>
+
+  <p class="readout" id="rReadout"></p>
+
+  <div class="grid-wrap">
+    <table class="grid" id="rgrid">
+      <thead id="rHead"></thead>
+      <tbody id="rBody"></tbody>
+      <tfoot id="rFoot"></tfoot>
+    </table>
+  </div>
+
+  <p class="legend">
+    <span class="key"><span class="swatch-free"></span> ledig plats — ingen av dina spelare kan fylla den</span>
+    <span class="key">★ ledig plats på en offnight</span>
+    <span class="key"><span class="swatch-off"></span> offnight</span>
+    <span class="key"><span class="swatch-dark"></span> ingen match i ligan</span>
+    <span class="key">Bänkad = spelare som har match men inte får plats i uppställningen.</span>
   </p>
 </section>
 
