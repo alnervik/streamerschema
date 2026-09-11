@@ -87,6 +87,11 @@ finns det hål?* Du ställer in hur många platser din liga startar — 2 C, 2 L
 NHL-lag. Sedan fyller appen varje speldag i perioden och visar vilka platser som
 blir stående tomma. Det är där en streamer ska in.
 
+Utöver startplatserna har ligan en bänk, `BN`, som standard 4 platser. Bänkade
+spelare ger inga poäng men finns kvar i laget hela veckan och kan ställas in
+vilken dag som helst. Startplatserna plus bänken är alltså hur stort laget får
+vara, och en tom bänkplats är utrymme att plocka upp en extra spelare på.
+
 Flera lag går att ha samtidigt, ett per fantasyliga, var och ett med sin egen
 platsuppsättning och spelarlista. **Kopiera** är genvägen när två ligor har nästan
 samma lag.
@@ -112,6 +117,9 @@ hade blivit utan. Antalet startade spelare per dag blir alltså så högt som de
 | Gul cell, `LEDIG` | Ingen av dina spelare kan fylla platsen den dagen |
 | ★ | Den lediga platsen ligger på en offnight — lättast att plocka upp |
 | Grå kolumn | Ingen NHL-match alls den dagen, räknas inte med |
+| `BN`-rad | Bänken: dina spelare som har match men inte fick en startplats |
+| `–` på en `BN`-rad | Ledig bänkplats, alltså plats över för en extra spelare |
+| `+2` på sista `BN`-raden | Så många spelare med match får inte plats ens på bänken |
 | Bänkade | Dina spelare som har match men inte får plats — laget är för brett den dagen |
 
 Offnight-tröskeln är gemensam med schemavyn, så båda flikarna är överens om

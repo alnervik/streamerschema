@@ -413,6 +413,9 @@ table { border-collapse: separate; border-spacing: 0; width: auto; }
   border-left: 1px solid var(--rule);
 }
 
+/* Fler spelare än ligan tillåter — värt att märka. */
+.panel h2 .count.is-over { color: var(--red); }
+
 .panel-note { margin: 0 0 12px; font-size: 13px; color: var(--ink-2); max-width: 70ch; }
 
 .panel-actions {
@@ -468,6 +471,11 @@ table { border-collapse: separate; border-spacing: 0; width: auto; }
 .pos-D    { background: #ece7f4; color: #4d3b7a; }
 .pos-UTIL { background: #eef0f2; color: #46535f; }
 .pos-G    { background: #f9e5e6; color: #8c2328; }
+/* Bänken är ingen startplats och får därför ingen egen positionsfärg. */
+.pos-BN   { background: var(--board); color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--rule); }
+
+/* Bänkrutan skiljs från startplatserna med lite luft. */
+.slot-bench { margin-left: 6px; border-style: dashed; }
 
 /* Spelarlistan */
 .roster { width: 100%; font-size: 14px; }
@@ -592,6 +600,22 @@ table { border-collapse: separate; border-spacing: 0; width: auto; }
 }
 
 .star { color: var(--off-line); font-size: 12px; cursor: help; }
+
+/* Bänkraderna hör till uppställningen men ger inga poäng, så de tonas ned och
+   skiljs från startplatserna med en linje. */
+.grid tr.bench-top > td { border-top: 2px solid var(--rule); }
+.grid tr.is-bench td.cell .ln-name { font-weight: 500; color: var(--ink-2); }
+.grid tr.is-bench td.col-slot,
+.grid tr.is-bench td.num { color: var(--ink-3); }
+
+/* En tom bänkplats är inget hål — den ska synas som utrymme, inte som larm. */
+.ln-open { color: var(--ink-3); cursor: help; }
+
+.ln-over {
+  font: 700 11px 'Barlow Semi Condensed', sans-serif;
+  color: var(--red);
+  cursor: help;
+}
 
 .grid tfoot td {
   position: sticky;

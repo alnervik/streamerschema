@@ -469,8 +469,13 @@ function setOffMax(value) {
 
 const POS = ['C', 'LW', 'RW', 'D', 'G'];
 const SKATERS = ['C', 'LW', 'RW', 'D'];
+/* Startplatserna — de som ger poäng och som rutnätet fyller dag för dag. */
 const SLOTS = ['C', 'LW', 'RW', 'D', 'UTIL', 'G'];
-const DEFAULT_SLOTS = { C: 2, LW: 2, RW: 2, D: 4, UTIL: 1, G: 2 };
+/* Bänken ger inga poäng, men spelarna finns kvar i laget hela veckan och kan
+   ställas in vilken dag som helst. Den avgör hur stort laget får vara. */
+const BENCH = 'BN';
+const ALL_SLOTS = [...SLOTS, BENCH];
+const DEFAULT_SLOTS = { C: 2, LW: 2, RW: 2, D: 4, UTIL: 1, G: 2, BN: 4 };
 const STORE = 'nhl-schema.rosters.v1';
 const MAX_ROSTERS = 40;
 const MAX_PLAYERS = 60;
@@ -515,7 +520,7 @@ function cleanRosters(list) {
 
   return list.slice(0, MAX_ROSTERS).filter(Boolean).map((r, i) => {
     const slots = { ...DEFAULT_SLOTS };
-    for (const type of SLOTS) {
+    for (const type of ALL_SLOTS) {
       const n = Number(r?.slots?.[type]);
       if (Number.isFinite(n)) slots[type] = Math.max(0, Math.min(12, Math.round(n)));
     }
@@ -559,8 +564,8 @@ function renderRosterPanels() {
 
 function renderSlotFields() {
   const r = activeRoster();
-  $('#slotFields').innerHTML = SLOTS.map((type) => `
-    <label class="slot">
+  $('#slotFields').innerHTML = ALL_SLOTS.map((type) => `
+    <label class="slot${type === BENCH ? ' slot-bench' : ''}"${type === BENCH ? ' title="Bänkplatser — spelarna ger inga poäng där, men de finns kvar i laget hela veckan"' : ''}>
       <span class="slot-tag pos-${type}">${type}</span>
       <input type="number" min="0" max="12" step="1" data-slot="${type}" value="${r.slots[type]}">
     </label>`).join('');
@@ -576,17 +581,26 @@ function renderSlotFields() {
       saveRosters();
       if (r !== activeRoster()) return;
       renderSlotSum();
+      renderRosterCount();  // platserna avgör hur stort laget får vara
       renderLineup();
     });
   }
   renderSlotSum();
 }
 
+/* Startplatserna fylls varje speldag, bänken bara en gång: den avgör hur många
+   spelare laget får hålla — och därmed hur mycket utrymme det finns att stänga
+   hål med. */
 function renderSlotSum() {
   const r = activeRoster();
-  const total = SLOTS.reduce((n, type) => n + r.slots[type], 0);
-  $('#slotSum').textContent = `${total} ${total === 1 ? 'plats' : 'platser'} att fylla per speldag`;
+  const start = SLOTS.reduce((n, type) => n + r.slots[type], 0);
+  const bench = r.slots[BENCH];
+  $('#slotSum').textContent =
+    `${start} ${start === 1 ? 'plats' : 'platser'} att fylla per speldag`
+    + ` · ${bench} på bänken · ${start + bench} spelare i laget`;
 }
+
+const rosterCap = (roster) => ALL_SLOTS.reduce((n, type) => n + roster.slots[type], 0);
 
 function renderRosterTable() {
   const r = activeRoster();
@@ -653,9 +667,17 @@ function renderRosterCount() {
   const r = activeRoster();
   const ready = r.players.filter((p) => p.team && p.pos.length).length;
   const rest = r.players.length - ready;
-  $('#rosterCount').textContent = rest
-    ? `${ready} spelare · ${rest} ofullständig${rest === 1 ? '' : 'a'}`
-    : `${ready} spelare`;
+  const cap = rosterCap(r);
+  const over = r.players.length - cap;
+
+  const el = $('#rosterCount');
+  el.textContent =
+    `${ready} spelare`
+    + (rest ? ` · ${rest} ofullständig${rest === 1 ? '' : 'a'}` : '')
+    + (over > 0
+      ? ` · ${over} över ligans ${cap} platser`
+      : ` · ${-over} ${-over === 1 ? 'ledig plats' : 'lediga platser'} i laget`);
+  el.classList.toggle('is-over', over > 0);
 }
 
 /* ── Snabbinmatning: D-COL, C/LW-TOR, G-VGK ─────────────────── */
@@ -699,9 +721,9 @@ function quickAdd(text) {
 
 /* ── Uppställningen ─────────────────────────────────────────── */
 /* Varje plats i ligan blir en egen rad: C1, C2, LW1 … */
-function slotRows(roster) {
+function slotRows(roster, types) {
   const out = [];
-  for (const type of SLOTS) {
+  for (const type of types) {
     const n = roster.slots[type];
     for (let i = 1; i <= n; i++) out.push({ type, label: n > 1 ? `${type}${i}` : type });
   }
@@ -756,7 +778,8 @@ function buildLineup() {
     playsOn.set(`${g.away}|${g.date}`, { opp: g.home, home: false });
   }
 
-  const slots = slotRows(roster);
+  const slots = slotRows(roster, SLOTS);
+  const benchSlots = slotRows(roster, [BENCH]);
   const players = roster.players.filter((p) => p.team && p.pos.length);
 
   const cols = days.map((day) => {
@@ -776,11 +799,17 @@ function buildLineup() {
     const seats = bySlot.map((i) => (i === -1 ? null : playing[i]));
     const bench = playing.filter((_, i) => bySeat[i] === -1);
 
+    /* Bänkraderna visar vilka av dagens spelare som blir över. Får de inte plats
+       ens där är laget större än ligan tillåter — det räknas som `over`. */
+    const benchSeats = benchSlots.map((_, i) => bench[i] ?? null);
+
     return {
       day, games, live,
       off: live && games <= state.offMax,
       seats,
       bench,
+      benchSeats,
+      over: Math.max(0, bench.length - benchSlots.length),
       free: live ? seats.filter((s) => !s).length : 0,
       playing: playing.length,
     };
@@ -791,7 +820,7 @@ function buildLineup() {
     ? `${weeks[0].label} – ${weeks[weeks.length - 1].label}`
     : (weeks[0]?.label ?? '–');
 
-  return { days, cols, slots, players, roster, from, to, label };
+  return { days, cols, slots, benchSlots, players, roster, from, to, label };
 }
 
 /* ── Rendering av uppställningen ────────────────────────────── */
@@ -823,7 +852,7 @@ function renderLineupHead(t) {
 function renderLineupBody(t) {
   const cols = t.days.length + 3;
 
-  if (!t.slots.length) {
+  if (!t.slots.length && !t.benchSlots.length) {
     $('#rBody').innerHTML = `<tr><td class="r-none" colspan="${cols}">Ligan har inga platser inställda — fyll i antalet under <b>Ligans platser</b>.</td></tr>`;
     $('#rFoot').innerHTML = '';
     return;
@@ -855,11 +884,42 @@ function renderLineupBody(t) {
     }).join('');
 
     return `<tr>${head}${cells}</tr>`;
+  }).join('') + benchBody(t);
+}
+
+/* Bänkraderna ligger under startplatserna och räknas inte som hål: en tom
+   bänkplats är tvärtom utrymme att plocka upp en extra spelare på. */
+function benchBody(t) {
+  return t.benchSlots.map((slot, s) => {
+    const used = t.cols.filter((c) => c.live && c.benchSeats[s]).length;
+    const open = t.cols.filter((c) => c.live && !c.benchSeats[s]).length;
+    const last = s === t.benchSlots.length - 1;
+
+    let frz = 0;
+    const head = `<td class="col-slot frozen" data-frz="${frz++}"><span class="slot-tag pos-${BENCH}">${slot.label}</span></td>`
+      + `<td class="num frozen" data-frz="${frz++}">${used}</td>`
+      + `<td class="num frozen frozen-last zero" data-frz="${frz++}">${open}</td>`;
+
+    const cells = t.cols.map((c) => {
+      if (!c.live) return '<td class="cell is-dark"></td>';
+      const off = c.off ? ' is-off' : '';
+      const seat = c.benchSeats[s];
+      if (!seat) return `<td class="cell is-open${off}"><span class="ln-open" title="Bänkplatsen är ledig den dagen">–</span></td>`;
+
+      const over = last && c.over
+        ? ` <span class="ln-over" title="${c.over} spelare till med match får inte plats ens på bänken">+${c.over}</span>`
+        : '';
+      return `<td class="cell${off}">`
+        + `<span class="ln-name">${esc(nameOf(seat.p))}</span>`
+        + `<span class="ln-opp">${seat.g.home ? '' : '@'}${seat.g.opp}${over}</span></td>`;
+    }).join('');
+
+    return `<tr class="is-bench${s === 0 ? ' bench-top' : ''}">${head}${cells}</tr>`;
   }).join('');
 }
 
 function renderLineupFoot(t) {
-  if (!t.slots.length) return;
+  if (!t.slots.length && !t.benchSlots.length) return;
 
   const rows = [
     {
@@ -870,7 +930,7 @@ function renderLineupFoot(t) {
     },
     {
       label: 'Bänkade', heat: 'cool',
-      title: 'Dina spelare som har match men inte får plats i uppställningen',
+      title: 'Dina spelare som har match men inte får en startplats — de tar en bänkplats (BN) den dagen',
       get: (c) => c.bench.length,
       tip: (c) => c.bench.map((b) => nameOf(b.p)).join(', '),
     },
@@ -917,6 +977,7 @@ function renderLineupReadout(t) {
   const seatDays = playDays.length * t.slots.length;
   const free = playDays.reduce((n, c) => n + c.free, 0);
   const bench = playDays.reduce((n, c) => n + c.bench.length, 0);
+  const over = playDays.filter((c) => c.over).length;
 
   const perType = SLOTS.map((type) => {
     const idx = t.slots.map((s, i) => (s.type === type ? i : -1)).filter((i) => i >= 0);
@@ -928,10 +989,11 @@ function renderLineupReadout(t) {
   el.innerHTML =
     `<b>${esc(t.roster.name)}</b> · ${esc(t.label)} · ${fmtLong.format(toDate(t.from.start))} – ${fmtLong.format(toDate(t.to.end))} · `
     + `${t.days.length} dagar varav <b>${playDays.length}</b> med NHL-matcher · `
-    + `${t.players.length} spelare på ${t.slots.length} platser<br>`
+    + `${t.players.length} spelare på ${t.slots.length} startplatser + ${t.benchSlots.length} på bänken<br>`
     + `<b>${free}</b> lediga platser av ${seatDays} · `
     + (perType.length ? `lediga per position: ${perType.join(' · ')}` : 'inga hål alls i perioden')
-    + (bench ? ` · <b>${bench}</b> bänkade starter` : '');
+    + (bench ? ` · <b>${bench}</b> bänkade starter` : '')
+    + (over ? ` · <b>${over}</b> ${over === 1 ? 'dag' : 'dagar'} med fler spelare i spel än laget har platser` : '');
 }
 
 /* ── Händelser för lagvyn ───────────────────────────────────── */
@@ -1022,6 +1084,7 @@ function wireRoster() {
     activeRoster().slots = { ...DEFAULT_SLOTS };
     saveRosters();
     renderSlotFields();
+    renderRosterCount();
     renderLineup();
   });
 
