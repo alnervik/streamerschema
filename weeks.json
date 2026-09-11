@@ -1,0 +1,168 @@
+{
+  "season": "20262027",
+  "updated": "2026-09-10T20:10:17Z",
+  "weeks": [
+    {
+      "label": "Vecka 1",
+      "number": 1,
+      "start": "2026-09-29",
+      "end": "2026-10-04"
+    },
+    {
+      "label": "Vecka 2",
+      "number": 2,
+      "start": "2026-10-05",
+      "end": "2026-10-11"
+    },
+    {
+      "label": "Vecka 3",
+      "number": 3,
+      "start": "2026-10-12",
+      "end": "2026-10-18"
+    },
+    {
+      "label": "Vecka 4",
+      "number": 4,
+      "start": "2026-10-19",
+      "end": "2026-10-25"
+    },
+    {
+      "label": "Vecka 5",
+      "number": 5,
+      "start": "2026-10-26",
+      "end": "2026-11-01"
+    },
+    {
+      "label": "Vecka 6",
+      "number": 6,
+      "start": "2026-11-02",
+      "end": "2026-11-08"
+    },
+    {
+      "label": "Vecka 7",
+      "number": 7,
+      "start": "2026-11-09",
+      "end": "2026-11-15"
+    },
+    {
+      "label": "Vecka 8",
+      "number": 8,
+      "start": "2026-11-16",
+      "end": "2026-11-22"
+    },
+    {
+      "label": "Vecka 9",
+      "number": 9,
+      "start": "2026-11-23",
+      "end": "2026-11-29"
+    },
+    {
+      "label": "Vecka 10",
+      "number": 10,
+      "start": "2026-11-30",
+      "end": "2026-12-06"
+    },
+    {
+      "label": "Vecka 11",
+      "number": 11,
+      "start": "2026-12-07",
+      "end": "2026-12-13"
+    },
+    {
+      "label": "Vecka 12",
+      "number": 12,
+      "start": "2026-12-14",
+      "end": "2026-12-20"
+    },
+    {
+      "label": "Vecka 13",
+      "number": 13,
+      "start": "2026-12-21",
+      "end": "2026-12-27"
+    },
+    {
+      "label": "Vecka 14",
+      "number": 14,
+      "start": "2026-12-28",
+      "end": "2027-01-03"
+    },
+    {
+      "label": "Vecka 15",
+      "number": 15,
+      "start": "2027-01-04",
+      "end": "2027-01-10"
+    },
+    {
+      "label": "Vecka 16",
+      "number": 16,
+      "start": "2027-01-11",
+      "end": "2027-01-17"
+    },
+    {
+      "label": "Vecka 17",
+      "number": 17,
+      "start": "2027-01-18",
+      "end": "2027-01-24"
+    },
+    {
+      "label": "Vecka 18",
+      "number": 18,
+      "start": "2027-01-25",
+      "end": "2027-01-31"
+    },
+    {
+      "label": "Vecka 19",
+      "number": 19,
+      "start": "2027-02-01",
+      "end": "2027-02-14"
+    },
+    {
+      "label": "Vecka 20",
+      "number": 20,
+      "start": "2027-02-15",
+      "end": "2027-02-21"
+    },
+    {
+      "label": "Vecka 21",
+      "number": 21,
+      "start": "2027-02-22",
+      "end": "2027-02-28"
+    },
+    {
+      "label": "Vecka 22",
+      "number": 22,
+      "start": "2027-03-01",
+      "end": "2027-03-07"
+    },
+    {
+      "label": "Vecka 23",
+      "number": 23,
+      "start": "2027-03-08",
+      "end": "2027-03-14"
+    },
+    {
+      "label": "Vecka 24",
+      "number": 24,
+      "start": "2027-03-15",
+      "end": "2027-03-21"
+    },
+    {
+      "label": "Vecka 25",
+      "number": 25,
+      "start": "2027-03-22",
+      "end": "2027-03-28"
+    },
+    {
+      "label": "Vecka 26",
+      "number": 26,
+      "start": "2027-03-29",
+      "end": "2027-04-04"
+    },
+    {
+      "label": "Vecka 27",
+      "number": 27,
+      "start": "2027-04-05",
+      "end": "2027-04-10"
+    }
+  ]
+}

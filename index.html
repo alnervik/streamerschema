@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NHL-schema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-id">
+    <h1>NHL-schema</h1>
+    <span class="season" id="seasonLabel">–</span>
+  </div>
+
+  <p class="stamp" id="stamp"></p>
+</header>
+
+<main>
+
+<!-- ─────────────── Schemavy ─────────────── -->
+<section id="view-schedule">
+
+  <div class="toolbar">
+    <label class="field field-wide">
+      <span>Period</span>
+      <select id="weekPick"></select>
+    </label>
+
+    <label class="field" data-custom hidden>
+      <span>Från</span>
+      <input type="date" id="fromDate">
+    </label>
+
+    <label class="field" data-custom hidden>
+      <span>Till</span>
+      <input type="date" id="toDate">
+    </label>
+
+    <label class="field">
+      <span>Offnight: högst</span>
+      <input type="number" id="offMax" min="1" max="16" step="1" value="6">
+      <em>matcher i ligan</em>
+    </label>
+
+    <label class="field">
+      <span>Minst</span>
+      <input type="number" id="minGp" min="0" max="7" step="1" value="0">
+      <em>matcher</em>
+    </label>
+
+    <label class="field">
+      <span>Division</span>
+      <select id="divPick"><option value="all">Alla</option></select>
+    </label>
+
+    <button class="ghost" id="clearPins" hidden>Avmarkera lag</button>
+  </div>
+
+  <p class="readout" id="readout"></p>
+
+  <div class="grid-wrap">
+    <table class="grid" id="grid">
+      <thead id="gridHead"></thead>
+      <tbody id="gridBody"></tbody>
+    </table>
+  </div>
+
+  <p class="legend">
+    <span class="key"><span class="chip chip-home">BOS</span> hemma</span>
+    <span class="key"><span class="chip chip-away">@BOS</span> borta</span>
+    <span class="key"><span class="swatch-off"></span> offnight</span>
+    <span class="key"><span class="swatch-b2b"></span> lagets andra match på två dagar</span>
+    <span class="key">🥱 motståndaren spelade dagen innan</span>
+    <span class="key"><span class="swatch-scale warm"><i></i><i></i><i></i><i></i></span> mer är bättre</span>
+    <span class="key"><span class="swatch-scale cool"><i></i><i></i><i></i><i></i></span> mer är sämre</span>
+    <span class="key">Klicka på ett lag för att markera det.</span>
+  </p>
+</section>
+
+<!-- ─────────────── Tomt läge ─────────────── -->
+<section id="view-empty" hidden>
+  <div class="empty">
+    <h2>Ingen schemafil hittades</h2>
+    <p>
+      Kör <code>node scripts/fetch-schedule.mjs</code> för att skapa
+      <code>data/schedule.json</code>, eller hämta schemat direkt från NHL:s API nu.
+      Det som hämtas här sparas inte — använd skriptet för det.
+    </p>
+    <button class="solid" id="fetchLive">Hämta från NHL:s API</button>
+    <p class="err" id="emptyErr"></p>
+  </div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

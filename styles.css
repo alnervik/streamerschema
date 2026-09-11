@@ -1,0 +1,364 @@
+/* Palett hämtad från rinkens markeringar: is, blå linje, röd linje, sarg. */
+:root {
+  --ice:      #e9eef3;
+  --board:    #ffffff;
+  --ink:      #101820;
+  --ink-2:    #5d6b78;
+  --ink-3:    #8794a1;
+  --rule:     #d0d9e2;
+  --rule-2:   #e3e9ef;
+  --blue:     #1d5c8f;
+  --blue-pale:#dceaf5;
+  --red:      #b4262b;
+  --off:      #d6f2e6;
+  --off-2:    #b6e7d3;
+  --off-line: #3d9d78;
+  --off-ink:  #1c6a4e;
+  --pin:      #fff8d6;
+  --radius:   3px;
+  --pad:      clamp(10px, 1.2vw, 16px);
+  --maxw:     2200px;
+  --gridw:    1500px;   /* så brett rutnätet får sträcka ut sig */
+
+  /* Värmeskalor för sifferkolumnerna: gult = mer är bättre, blått = mer är sämre. */
+  --warm-1:   #fdf8e0;
+  --warm-2:   #fbeeb6;
+  --warm-3:   #f7de83;
+  --warm-4:   #f2c94c;
+  --cool-1:   #eaf2fa;
+  --cool-2:   #cfe2f4;
+  --cool-3:   #a9c9e9;
+  --cool-4:   #7fabd8;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ice);
+  color: var(--ink);
+  font: 400 14px/1.45 Barlow, system-ui, sans-serif;
+}
+
+/* Innehållet får en maxbredd så att raderna inte dras ut över en hel bred
+   skärm, men med gott om plats för rutnätet innan det börjar scrolla. */
+.bar,
+main { padding-inline: max(var(--pad), calc((100% - var(--maxw)) / 2)); }
+
+code {
+  font-size: .92em;
+  background: var(--rule-2);
+  padding: 1px 5px;
+  border-radius: var(--radius);
+}
+
+/* ── Topplist ─────────────────────────────── */
+.bar {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-block: 11px;
+  background: var(--board);
+  border-bottom: 2px solid var(--ink);
+}
+
+.bar-id { display: flex; align-items: baseline; gap: 8px; }
+
+.bar h1 {
+  margin: 0;
+  font: 700 21px/1 'Barlow Semi Condensed', sans-serif;
+  letter-spacing: .01em;
+}
+
+.season {
+  font: 500 15px/1 'Barlow Semi Condensed', sans-serif;
+  color: var(--ink-2);
+  padding-left: 9px;
+  border-left: 2px solid var(--red);
+}
+
+.stamp {
+  margin: 0 0 0 auto;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+main { padding-block: var(--pad); }
+
+/* ── Kontroller ───────────────────────────── */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 18px;
+  margin-bottom: 12px;
+}
+
+.field { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.field > span { color: var(--ink-2); }
+.field > em { color: var(--ink-3); font-style: normal; font-size: 12px; }
+
+.field select,
+.field input {
+  font: 500 14px Barlow, sans-serif;
+  color: var(--ink);
+  background: var(--board);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 5px 7px;
+}
+
+.field input[type="number"] { width: 52px; }
+.field-wide select { min-width: 220px; }
+
+:is(select, input, button):focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+
+button { font: 500 14px Barlow, sans-serif; cursor: pointer; border-radius: var(--radius); }
+
+.solid {
+  background: var(--blue);
+  color: #fff;
+  border: 1px solid var(--blue);
+  padding: 7px 14px;
+}
+
+.solid:hover { background: #17496f; }
+
+.ghost {
+  background: var(--board);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 7px 12px;
+}
+
+.ghost:hover { border-color: var(--ink-3); }
+
+.readout {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--ink-2);
+  min-height: 1.5em;
+}
+
+.readout b { color: var(--ink); font-weight: 600; }
+.err { color: var(--red); }
+
+/* ── Rutnätet ─────────────────────────────── */
+/* Rutnätet får fylla ut skärmen — men bara upp till --gridw, annars dras en
+   kort vecka isär över två meter skärm. Är tabellen bredare än så scrollar
+   wrappern i sidled i stället. */
+.grid-wrap {
+  overflow: auto;
+  background: var(--board);
+  border: 1px solid var(--rule);
+  max-height: 82vh;
+  width: fit-content;
+  min-width: min(100%, var(--gridw));
+  max-width: 100%;
+}
+
+table { border-collapse: separate; border-spacing: 0; width: auto; }
+
+#grid { width: 100%; }
+
+/* De frysta kolumnerna håller sin bredd, så luften hamnar på dagarna. */
+.grid th.col-team { width: 210px; }
+.grid th.num { width: 78px; }
+.grid th.col-day { min-width: 76px; }
+
+.grid {
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.grid th, .grid td {
+  border-bottom: 1px solid var(--rule-2);
+  border-right: 1px solid var(--rule-2);
+  padding: 0;
+}
+
+.grid thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--board);
+  border-bottom: 2px solid var(--ink);
+  padding: 6px 9px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.grid .day-name { display: block; font-weight: 600; }
+.grid .day-date { display: block; font-weight: 400; font-size: 13px; color: var(--ink-2); }
+
+.grid .day-load {
+  display: block;
+  width: fit-content;
+  margin: 3px auto 0;
+  padding: 1px 7px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--rule-2);
+  border-radius: 9px;
+}
+
+/* Offnight: högst N matcher i hela ligan. */
+.grid th.is-off { background: var(--off); }
+.grid th.is-off .day-name { color: var(--off-ink); }
+.grid th.is-off .day-load { background: var(--off-2); color: var(--off-ink); }
+.grid td.is-off { background: var(--off); }
+
+/* ── Frysta kolumner till vänster ─────────── */
+.grid th.frozen,
+.grid td.frozen {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--board);
+}
+
+.grid thead th.frozen { z-index: 4; }
+
+.grid th.frozen-last,
+.grid td.frozen-last { border-right: 2px solid var(--ink); }
+
+.grid th.col-team,
+.grid td.col-team { text-align: left; }
+
+.grid td.col-team { padding: 3px 10px 3px 8px; }
+
+/* Värmeskalorna ligger efter .frozen så att de vinner på bakgrunden. */
+.grid td.warm-1 { background: var(--warm-1); }
+.grid td.warm-2 { background: var(--warm-2); }
+.grid td.warm-3 { background: var(--warm-3); }
+.grid td.warm-4 { background: var(--warm-4); }
+.grid td.cool-1 { background: var(--cool-1); }
+.grid td.cool-2 { background: var(--cool-2); }
+.grid td.cool-3 { background: var(--cool-3); }
+.grid td.cool-4 { background: var(--cool-4); }
+.grid td.zero { color: var(--ink-3); font-weight: 400; }
+
+/* Markering och hover läggs som ett lager ovanpå, så färgskalan syns igenom. */
+.grid tbody tr.is-pinned td { box-shadow: inset 0 0 0 999px rgba(224, 163, 60, .22); }
+.grid tbody tr:hover td { box-shadow: inset 0 0 0 999px rgba(29, 92, 143, .07); }
+
+.team-btn {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.team-abv { font-weight: 700; font-size: 15px; letter-spacing: .02em; }
+.team-name { color: var(--ink-2); font-size: 13px; }
+
+.cell { padding: 3px 5px; text-align: center; }
+
+.chip {
+  display: inline-block;
+  min-width: 44px;
+  padding: 3px 6px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+}
+
+.chip-home { background: var(--blue-pale); color: #123f63; border-color: #bcd8ea; }
+.chip-away { background: transparent; color: var(--ink-2); border-color: var(--rule); }
+.chip.b2b { box-shadow: inset 4px 0 0 var(--red); padding-left: 9px; }
+
+.tired {
+  margin-left: 2px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: help;
+}
+
+.grid td.num, .grid th.num { text-align: center; padding: 3px 10px; font-weight: 600; }
+.grid td.num { font-size: 15px; }
+
+.sortable { cursor: pointer; user-select: none; }
+.sortable:hover { color: var(--blue); }
+.sortable .arrow { color: var(--red); font-size: 11px; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  max-width: 100%;
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.key { display: flex; align-items: center; gap: 7px; }
+.key .chip { font-family: 'Barlow Semi Condensed', sans-serif; min-width: 0; }
+
+.swatch-off {
+  width: 15px; height: 15px;
+  background: var(--off);
+  border: 1px solid var(--off-line);
+}
+
+.swatch-b2b {
+  width: 15px; height: 15px;
+  background: var(--board);
+  border: 1px solid var(--rule);
+  box-shadow: inset 4px 0 0 var(--red);
+}
+
+.swatch-scale {
+  display: flex;
+  border: 1px solid var(--rule);
+}
+
+.swatch-scale i { width: 12px; height: 15px; }
+.swatch-scale.warm i:nth-child(1) { background: var(--warm-1); }
+.swatch-scale.warm i:nth-child(2) { background: var(--warm-2); }
+.swatch-scale.warm i:nth-child(3) { background: var(--warm-3); }
+.swatch-scale.warm i:nth-child(4) { background: var(--warm-4); }
+.swatch-scale.cool i:nth-child(1) { background: var(--cool-1); }
+.swatch-scale.cool i:nth-child(2) { background: var(--cool-2); }
+.swatch-scale.cool i:nth-child(3) { background: var(--cool-3); }
+.swatch-scale.cool i:nth-child(4) { background: var(--cool-4); }
+
+/* ── Tomt läge ────────────────────────────── */
+.empty {
+  max-width: 56ch;
+  background: var(--board);
+  border: 1px solid var(--rule);
+  padding: 22px;
+}
+
+.empty h2 { margin: 0 0 8px; font: 600 18px 'Barlow Semi Condensed', sans-serif; }
+.empty p { color: var(--ink-2); margin: 0 0 14px; }
+
+@media (max-width: 760px) {
+  .team-name { display: none; }
+  .stamp { width: 100%; margin-left: 0; }
+
+  /* Bara lagkolumnen får plats att ligga kvar när man scrollar i sidled. */
+  .grid .frozen:not(.col-team) { position: static; }
+  .grid td.num, .grid th.num { padding: 2px 5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
